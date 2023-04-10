@@ -7,7 +7,7 @@ require "json"
 
 describe "Test ReJSON" do
   before :all do
-    @rcl = Redis.new(db: 14)
+    @rcl = Redis.new(db: 14, port: ENV['REDIS_TEST_PORT'] || 6379)
 
     @docs = {
       'simple': {
