@@ -66,6 +66,11 @@ class Redis
       call_client(:type, pieces).to_s
     end
   end
+  
+  def json_merge(key, path, data)
+    pieces = [key, str_path(path), json_encode(data)]
+    call_client(:merge, pieces)
+  end     
 
   def json_numincrby(key, path, number)
     pieces = [key, str_path(path), number]
