@@ -67,6 +67,11 @@ class Redis
     end
   end
   
+  def json_toggle(key, path = Rejson::Path.json_root_path)
+    pieces = [key, str_path(path)]
+    call_client(:toggle, pieces)
+  end  
+  
   def json_merge(key, path, data)
     pieces = [key, str_path(path), json_encode(data)]
     call_client(:merge, pieces)
