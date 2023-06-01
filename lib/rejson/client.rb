@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 require "redis"
-require "json"
+require "fast_jsonparser"
+require "oj"
 
 # Extends Redis class to add JSON functions
 class Redis
@@ -66,11 +67,6 @@ class Redis
       call_client(:type, pieces).to_s
     end
   end
-  
-  def json_toggle(key, path = Rejson::Path.json_root_path)
-    pieces = [key, str_path(path)]
-    call_client(:toggle, pieces)
-  end  
   
   def json_merge(key, path, data)
     pieces = [key, str_path(path), json_encode(data)]
@@ -201,11 +197,11 @@ class Redis
   end
 
   def json_encode(obj)
-    JSON.generate(obj)
+    Oj.dump(obj)
   end
 
   def json_decode(obj)
-    JSON.parse(obj)
+    FastJsonparser.parse(obj, symbolize_keys: false)
   end
 
   def json_bulk_decode(obj)
@@ -214,7 +210,7 @@ class Redis
       if o.nil?
         res.append(nil)
       else
-        res.append(JSON.parse(o))
+        res.append(FastJsonparser.parse(o, symbolize_keys: false))
       end
     end
     res
